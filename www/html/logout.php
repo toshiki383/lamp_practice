@@ -6,6 +6,9 @@ require_once MODEL_PATH . 'functions.php';
 // セッションを開始
 session_start();
 
+// iframe対策
+header("X-FRAME-OPTIONS: DENY");
+
 // 関数を定義
 $_SESSION = array();
 $params = session_get_cookie_params();

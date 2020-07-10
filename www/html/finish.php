@@ -9,6 +9,9 @@ require_once MODEL_PATH . 'cart.php';
 // セッションを開始
 session_start();
 
+// iframe対策
+header("X-FRAME-OPTIONS: DENY");
+
 // ログインされていなければログインページに戻る
 if(is_logined() === false){
   redirect_to(LOGIN_URL);

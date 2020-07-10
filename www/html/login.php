@@ -6,6 +6,9 @@ require_once MODEL_PATH . 'functions.php';
 // セッションを開始
 session_start();
 
+// iframe対策
+header("X-FRAME-OPTIONS: DENY");
+
 // ログインされていればホームページに移動
 if(is_logined() === true){
   redirect_to(HOME_URL);

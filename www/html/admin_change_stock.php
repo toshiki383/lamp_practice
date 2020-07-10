@@ -5,8 +5,11 @@ require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'user.php';
 require_once MODEL_PATH . 'item.php';
 
-// セッションの開始
+// セッションを開始
 session_start();
+
+// iframe対策
+header("X-FRAME-OPTIONS: DENY");
 
 // ログインがされていなければログインページにに戻る
 if(is_logined() === false){
