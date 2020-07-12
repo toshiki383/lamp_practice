@@ -7,6 +7,9 @@ require_once MODEL_PATH . 'user.php';
 // セッションを開始
 session_start();
 
+// iframe対策
+header("X-FRAME-OPTIONS: DENY");
+
 // ログインされていればホームページに移動
 if(is_logined() === true){
   redirect_to(HOME_URL);
@@ -17,27 +20,45 @@ $name = get_post('name');
 $password = get_post('password');
 $password_confirmation = get_post('password_confirmation');
 
-// データベースに接続
-$db = get_db_connect();
+// POSTからトークンを取得
+$token = get_post('csrf_token');
 
-// ユーザーの登録
-try{
+// sessionからトークンを取得
+$session = get_session('csrf_token');
 
-  $result = regist_user($db, $name, $password, $password_confirmation);
-  if( $result=== false){
+// トークンが適正であれば以下を実行
+if(is_valid_csrf_token($token, $session) === true){
+
+  // データベースに接続
+  $db = get_db_connect();
+
+  // ユーザーの登録
+  try{
+
+    $result = regist_user($db, $name, $password, $password_confirmation);
+    if( $result=== false){
+      set_error('ユーザー登録に失敗しました。');
+      redirect_to(SIGNUP_URL);
+    }
+  }catch(PDOException $e){
     set_error('ユーザー登録に失敗しました。');
     redirect_to(SIGNUP_URL);
   }
-}catch(PDOException $e){
-  set_error('ユーザー登録に失敗しました。');
-  redirect_to(SIGNUP_URL);
+
+  // メッセージを取得
+  set_message('ユーザー登録が完了しました。');
+
+  // ログインを実行
+  login_as($db, $name, $password);
+
+  // ホームページに移動
+  redirect_to(HOME_URL);
+
+// 不正アクセスの場合
+}else{
+  // エラーを表示
+  set_error('不正なアクセスです。');
+
+  // ホームページに戻る
+  redirect_to(HOME_URL);
 }
-
-// メッセージを取得
-set_message('ユーザー登録が完了しました。');
-
-// ログインを実行
-login_as($db, $name, $password);
-
-// ホームページに移動
-redirect_to(HOME_URL);

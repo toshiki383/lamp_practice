@@ -8,6 +8,9 @@ require_once MODEL_PATH . 'item.php';
 // セッションを開始
 session_start();
 
+// iframe対策
+header("X-FRAME-OPTIONS: DENY");
+
 // ログインされていなければログインページに戻る
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
@@ -29,15 +32,33 @@ $price = get_post('price');
 $status = get_post('status');
 $stock = get_post('stock');
 
-// FILEから情報を取得
-$image = get_file('image');
+// POSTからトークンを取得
+$token = get_post('csrf_token');
 
-// 商品の登録
-if(regist_item($db, $name, $price, $stock, $status, $image)){
-  set_message('商品を登録しました。');
-}else {
-  set_error('商品の登録に失敗しました。');
+// sessionからトークンを取得
+$session = get_session('csrf_token');
+
+// トークンが適正であれば以下を実行
+if(is_valid_csrf_token($token, $session) === true){
+
+  // FILEから情報を取得
+  $image = get_file('image');
+
+  // 商品の登録
+  if(regist_item($db, $name, $price, $stock, $status, $image)){
+    set_message('商品を登録しました。');
+  }else {
+    set_error('商品の登録に失敗しました。');
+  }
+
+  // adminページに戻る
+  redirect_to(ADMIN_URL);
+
+// 不正アクセスの場合
+}else{
+  // エラーを表示
+  set_error('不正なアクセスです。');
+
+  // ホームページに戻る
+  redirect_to(ADMIN_URL);
 }
-
-// adminページに戻る
-redirect_to(ADMIN_URL);
