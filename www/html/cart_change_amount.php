@@ -27,12 +27,30 @@ $user = get_login_user($db);
 $cart_id = get_post('cart_id');
 $amount = get_post('amount');
 
-// カート内の数を変更
-if(update_cart_amount($db, $cart_id, $amount)){
-  set_message('購入数を更新しました。');
-} else {
-  set_error('購入数の更新に失敗しました。');
-}
+// POSTからトークンを取得
+$token = get_post('csrf_token');
 
-// カートページに戻る
-redirect_to(CART_URL);
+// sessionからトークンを取得
+$session = get_session('csrf_token');
+
+// トークンが適正であれば以下を実行
+if(is_valid_csrf_token($token, $session) === true){
+
+  // カート内の数を変更
+  if(update_cart_amount($db, $cart_id, $amount)){
+    set_message('購入数を更新しました。');
+  } else {
+    set_error('購入数の更新に失敗しました。');
+  }
+
+  // カートページに戻る
+  redirect_to(CART_URL);
+
+// 不正アクセスの場合
+}else{
+  // エラーを表示
+  set_error('不正なアクセスです。');
+
+  // ホームページに戻る
+  redirect_to(CART_URL);
+}

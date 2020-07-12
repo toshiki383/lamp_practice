@@ -26,12 +26,30 @@ $user = get_login_user($db);
 // POSTから商品IDを取得
 $item_id = get_post('item_id');
 
-// カートに商品を追加
-if(add_cart($db,$user['user_id'], $item_id)){
-  set_message('カートに商品を追加しました。');
-} else {
-  set_error('カートの更新に失敗しました。');
-}
+// POSTからトークンを取得
+$token = get_post('csrf_token');
 
-// ホームページに戻る
-redirect_to(HOME_URL);
+// sessionからトークンを取得
+$session = get_session('csrf_token');
+
+// トークンが適正であれば以下を実行
+if(is_valid_csrf_token($token, $session) === true){
+
+  // カートに商品を追加
+  if(add_cart($db,$user['user_id'], $item_id)){
+    set_message('カートに商品を追加しました。');
+  } else {
+    set_error('カートの更新に失敗しました。');
+  }
+
+  // ホームページに戻る
+  redirect_to(HOME_URL);
+
+// 不正アクセスの場合
+}else{
+  // エラーを表示
+  set_error('不正なアクセスです。');
+
+  // ホームページに戻る
+  redirect_to(HOME_URL);
+}

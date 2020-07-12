@@ -26,12 +26,30 @@ $user = get_login_user($db);
 // POSTから情報を取得
 $cart_id = get_post('cart_id');
 
-// カート内を削除
-if(delete_cart($db, $cart_id)){
-  set_message('カートを削除しました。');
-} else {
-  set_error('カートの削除に失敗しました。');
-}
+// POSTからトークンを取得
+$token = get_post('csrf_token');
 
-// カートページに戻る
-redirect_to(CART_URL);
+// sessionからトークンを取得
+$session = get_session('csrf_token');
+
+// トークンが適正であれば以下を実行
+if(is_valid_csrf_token($token, $session) === true){
+
+  // カート内を削除
+  if(delete_cart($db, $cart_id)){
+    set_message('カートを削除しました。');
+  } else {
+    set_error('カートの削除に失敗しました。');
+  }
+
+  // カートページに戻る
+  redirect_to(CART_URL);
+
+// 不正アクセスの場合
+}else{
+  // エラーを表示
+  set_error('不正なアクセスです。');
+
+  // ホームページに戻る
+  redirect_to(CART_URL);
+}

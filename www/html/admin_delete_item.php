@@ -30,12 +30,30 @@ if(is_admin($user) === false){
 // POSTから商品IDを取得
 $item_id = get_post('item_id');
 
-// 商品を削除
-if(destroy_item($db, $item_id) === true){
-  set_message('商品を削除しました。');
-} else {
-  set_error('商品削除に失敗しました。');
-}
+// POSTからトークンを取得
+$token = get_post('csrf_token');
 
-// adminページに戻る
-redirect_to(ADMIN_URL);
+// sessionからトークンを取得
+$session = get_session('csrf_token');
+
+// トークンが適正であれば以下を実行
+if(is_valid_csrf_token($token, $session) === true){
+
+  // 商品を削除
+  if(destroy_item($db, $item_id) === true){
+    set_message('商品を削除しました。');
+  } else {
+    set_error('商品削除に失敗しました。');
+  }
+
+  // adminページに戻る
+  redirect_to(ADMIN_URL);
+
+// 不正アクセスの場合
+}else{
+  // エラーを表示
+  set_error('不正なアクセスです。');
+
+  // ホームページに戻る
+  redirect_to(ADMIN_URL);
+}

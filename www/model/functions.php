@@ -21,7 +21,6 @@ function get_get($name){
 
 // POSTから情報を取得
 function get_post($name){
-  is_valid_csrf_token($token);
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
   };
