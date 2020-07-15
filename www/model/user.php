@@ -66,9 +66,14 @@ function regist_user($db, $name, $password, $password_confirmation) {
   return insert_user($db, $name, $password);
 }
 
-// ユーザーの管理区分
+// 管理ユーザー
 function is_admin($user){
   return $user['type'] === USER_TYPE_ADMIN;
+}
+
+// 一般ユーザー
+function is_nomal($user){
+  return $user['type'] === USER_TYPE_NORMAL;
 }
 
 // ユーザー情報のチェック

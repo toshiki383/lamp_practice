@@ -22,7 +22,7 @@ function get_item($db, $item_id){
   ";
   $params = array($item_id);
 
-  return fetch_query($db, $sql);
+  return fetch_query($db, $sql, $params);
 }
 
 // 全アイテム情報の取得
@@ -124,11 +124,6 @@ function update_item_stock($db, $item_id, $stock){
   ";
   
   $params = array($stock, $item_id);
-  // $stmt = $dbh->prepare($sql);
-  // $stmt->bindValue(1, $stock,    PDO::PARAM_INT);
-  // $stmt->bindValue(2, $item_id, PDO::PARAM_INT);
-  
-  // $stmt->execute($params);
   return execute_query($db, $sql, $params);
 }
 

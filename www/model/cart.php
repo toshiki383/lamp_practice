@@ -109,7 +109,7 @@ function delete_cart($db, $cart_id){
   ";
   $params = array($cart_id);
 
-  return execute_query($db, $sql);
+  return execute_query($db, $sql, $params);
 }
 
 // 購入時の関数
