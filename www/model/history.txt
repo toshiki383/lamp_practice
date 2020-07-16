@@ -1,0 +1,18 @@
+購入履歴の挿入文
+INSERT INTO history (user_id, created) VALUES ('1', CURRENT_TIMESTAMP);
+
+購入明細の挿入文
+INSERT INTO details(item_id, price, amount, history_id) VALUES ('1', '100', '1', '1');
+INSERT INTO details(item_id, price, amount, history_id) VALUES ('2', '200', '3', '1');
+
+購入履歴のセレクト文
+SELECT history.history_id, history.user_id, history.created, SUM(price * amount) AS 合計金額 FROM history 
+JOIN details ON history.history_id = details.history_id WHERE history.user_id = 1 GROUP BY details.history_id;
+
+購入明細ページの上部に表示するセレクト文
+SELECT history.history_id, history.user_id, history.created, SUM(price * amount) AS sum FROM history 
+JOIN details ON history.history_id = details.history_id WHEREhistory.user_id = 1 AND history.history_id = 1
+GROUP BY details.history_id
+
+購入明細のセレクト文
+SELECT details.item_id, items.name, details.price, details.amount, items.status, details.history_id FROM details JOIN items ON details.item_id = items.item_id WHERE details.history_id =1;

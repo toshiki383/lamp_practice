@@ -5,6 +5,7 @@ require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'user.php';
 require_once MODEL_PATH . 'item.php';
 require_once MODEL_PATH . 'cart.php';
+require_once MODEL_PATH . 'history.php';
 
 // セッションを開始
 session_start();
@@ -31,7 +32,7 @@ if(is_valid_csrf_token($token, $session) === true){
 
   // ユーザー情報の取得
   $user = get_login_user($db);
-
+  
   // ユーザーのカートない情報を取得
   $carts = get_user_carts($db, $user['user_id']);
 
@@ -39,7 +40,19 @@ if(is_valid_csrf_token($token, $session) === true){
   if(purchase_carts($db, $carts) === false){
     set_error('商品が購入できませんでした。');
     redirect_to(CART_URL);
-  } 
+  }
+  
+  // 購入履歴の登録
+  if(insert_history($db, $user['user_id'])){
+
+    // history_idの呼び出し
+    $history_id = $db->lastInsertId();
+
+    // 購入明細の登録
+    foreach($carts as $cart){
+      insert_details($db, $cart['item_id'], $cart['price'], $cart['amount'], $history_id);
+    }
+  }
 
   // 合計金額
   $total_price = sum_carts($carts);
