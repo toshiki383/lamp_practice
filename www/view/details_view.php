@@ -9,9 +9,17 @@
         <?php include VIEW_PATH . 'templates/header_logined.php'; ?>
         <h1>購入明細</h1>
         <ul>
-            <li>注文番号 : <?php print h($history['history_id']); ?></li>
-            <li>購入日時 : <?php print h($history['created']); ?></li>
-            <li>合計金額 : ¥<?php print h(number_format($history['sum']));?></li>
+            <?php if(is_admin($user)){ ?>
+                <?php foreach($historys as $history){ ?>
+                    <li>注文番号 : <?php print h($history['history_id']); ?></li>
+                    <li>購入日時 : <?php print h($history['created']); ?></li>
+                    <li>合計金額 : ¥<?php print h(number_format($history['sum']));?></li>
+                <?php } ?>
+            <?php }else if(is_nomal($user)){ ?>
+                <li>注文番号 : <?php print h($history['history_id']); ?></li>
+                <li>購入日時 : <?php print h($history['created']); ?></li>
+                <li>合計金額 : ¥<?php print h(number_format($history['sum']));?></li>
+            <?php } ?>
         </ul>
         <div class="container">
             <?php include VIEW_PATH . 'templates/messages.php'; ?>

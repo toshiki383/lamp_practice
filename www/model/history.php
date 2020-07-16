@@ -76,6 +76,30 @@ function select_history($db, $user_id, $history_id){
   return fetch_query($db, $sql, $params);
 }
 
+// 全てのユーザーの指定した購入履歴を取得
+function select_admin_history($db, $history_id){
+  $sql = "
+    SELECT
+      history.history_id,
+      history.user_id,
+      history.created,
+      SUM(price * amount) AS sum 
+    FROM 
+      history 
+    JOIN 
+      details 
+    ON 
+      history.history_id = details.history_id 
+    WHERE
+      history.history_id = ?
+    GROUP BY 
+      details.history_id
+  ";
+  $params = array($history_id);
+
+  return fetch_all_query($db, $sql, $params);
+}
+
 // 指定した購入明細を全て取得
 function select_details($db, $history_id){
   $sql = "

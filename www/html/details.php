@@ -23,9 +23,14 @@ $user = get_login_user($db);
 // GETから情報を取得
 $history_id = get_get('history_id');
 
-// 指定した購入履歴の取得
-$history = select_history($db, $user['user_id'], $history_id);
 
+if(is_admin($user)){
+    $historys = select_admin_history($db, $history_id);
+
+// 一般ユーザーは指定した購入履歴の取得
+}else if(is_nomal($user)){
+    $history = select_history($db, $user['user_id'], $history_id);
+}
 // 購入明細の取得
 $details = select_details($db, $history_id);
 
