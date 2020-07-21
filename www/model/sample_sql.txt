@@ -1,0 +1,25 @@
+　ーーーーーー選択課題1　商品の並び替え機能(難易度：中)ーーーーー
+
+価格の安い順
+SELECT item_id, name, stock, price, image, status FROM items
+    WHERE status = 1 ORDER BY price
+
+価格の高い順
+SELECT item_id, name, stock, price, image, status FROM items
+    WHERE status = 1 ORDER BY price DESC
+
+新着順
+SELECT * FROM items WHERE status = 1 ORDER BY created DESC
+
+
+ーーーーー選択課題2　ページネーション(難易度：高)ーーーーー
+
+SELECT item_id, name, stock, price, image, status
+    FROM items WHERE status = 1 LIMIT ?, ?
+
+ーーーーー選択課題3　ランキング機能(難易度：低)ーーーーー
+
+上位３つの取得
+SELECT items.item_id, items.name, items.stock, items.price, items.image, items.status, details.item_id, SUM(amount) 
+    FROM items JOIN details ON items.item_id = details.item_id GROUP BY items.item_id ORDER BY SUM(amount) LIMIT 3
+    

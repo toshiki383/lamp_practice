@@ -47,6 +47,113 @@ function get_items($db, $is_open = false){
   return fetch_all_query($db, $sql);
 }
 
+// 価格の安い順
+function get_low_items($db, $is_open = false){
+  $sql = '
+    SELECT 
+      item_id, 
+      name, 
+      stock, 
+      price, 
+      image, 
+      status 
+    FROM 
+      items
+  ';
+  if($is_open === true){
+    $sql .= '
+      WHERE 
+        status = 1 
+    ';
+  }
+  $sql .= '
+    ORDER BY 
+      price
+  ';
+  return fetch_all_query($db, $sql);
+}
+
+// 価格の高い順
+function get_high_items($db, $is_open = false){
+  $sql = '
+    SELECT 
+      item_id, 
+      name, 
+      stock, 
+      price, 
+      image, 
+      status 
+    FROM 
+      items
+  ';
+  if($is_open === true){
+    $sql .= '
+      WHERE 
+        status = 1 
+    ';
+  }
+  $sql .= '
+    ORDER BY 
+      price DESC
+  ';
+  return fetch_all_query($db, $sql);
+}
+
+// 新着順
+function get_new_items($db, $is_open = false){
+  $sql = '
+    SELECT 
+      *
+    FROM 
+      items
+  ';
+  if($is_open === true){
+    $sql .= '
+      WHERE 
+        status = 1 
+    ';
+  }
+  $sql .= '
+    ORDER BY 
+      created DESC
+  ';
+  return fetch_all_query($db, $sql);
+}
+
+function get_rank($db, $is_open = false){
+  $sql = '
+    SELECT 
+      items.item_id,
+      items.name,
+      items.stock,
+      items.price,
+      items.image,
+      items.status,
+      details.item_id, 
+      SUM(amount) 
+    FROM 
+      items
+  ';
+  if($is_open === true){
+    $sql .= '
+      WHERE 
+        status = 1 
+    ';
+  }
+  $sql .= '
+    JOIN 
+      details 
+    ON 
+      items.item_id = details.item_id 
+    GROUP BY 
+      items.item_id 
+    ORDER BY 
+      SUM(amount) DESC
+    LIMIT 3
+  ';
+  return fetch_all_query($db, $sql);
+}
+
 // 全ての商品情報を取得
 function get_all_items($db){
   return get_items($db);

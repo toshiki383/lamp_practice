@@ -9,7 +9,7 @@ define('STYLESHEET_PATH', '/assets/css/');
 define('IMAGE_DIR', $_SERVER['DOCUMENT_ROOT'] . '/assets/images/' );
 
 // データベースの情報ユーザー情報
-define('DB_HOST', 'mysql');
+define('DB_HOST', 'localhost');
 define('DB_NAME', 'sample');
 define('DB_USER', 'testuser');
 define('DB_PASS', 'password');
